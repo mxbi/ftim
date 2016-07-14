@@ -24,7 +24,7 @@ method = 'purity'
 
 # Only used for the purity metric, gives weight to the different splits based on how many samples exist in the bin
 weighted = True
-ignore_zero = False
+ignore_nan = False
 
 ######### END CONFIG ##########
 
@@ -55,7 +55,7 @@ def hist_inter(a, b, bins):
 
     return k
 
-def hist_purity(a, b, target_a, target_b, bins, weighted=True, ignore_zero=False):
+def hist_purity(a, b, target_a, target_b, bins, weighted=True, ignore_nan=False):
 
     # Get range of histogram to use
     hist_max = max(max(a), max(b))
@@ -85,7 +85,7 @@ def hist_purity(a, b, target_a, target_b, bins, weighted=True, ignore_zero=False
     hist_a_purity = hist_a_true / hist_a_tot
     hist_b_purity = hist_b_true / hist_b_tot
 
-    if ignore_zero is False:
+    if ignore_nan is False:
         hist_a_purity = np.nan_to_num(hist_a_purity)
         hist_b_purity = np.nan_to_num(hist_b_purity)
 
@@ -142,7 +142,7 @@ def find_ovalue_purity(feature, target):
             if y > x:  # Avoid repeating the same chunk pair
                 xt = target_chunks[xi]
                 yt = target_chunks[yi]
-                dist = hist_purity(x, y, xt, yt, x_res, weighted, ignore_zero)
+                dist = hist_purity(x, y, xt, yt, x_res, weighted, ignore_nan)
                 cross.append(dist)
     try:
         return sum(cross) / len(cross)
