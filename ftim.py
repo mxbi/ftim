@@ -24,7 +24,7 @@ method = 'purity'
 
 # Only used for the purity metric, gives weight to the different splits based on how many samples exist in the bin
 weighted = True
-ignore_nan = False
+ignore_zero = False
 
 ######### END CONFIG ##########
 
@@ -111,7 +111,7 @@ def find_ovalue_inter(feature, target):
         else:
             ftr_false.append(x[0])
 
-    #
+    # Split into time bins
     chunks_true = [x.tolist() for x in np.array_split(ftr_true, time_res)]
     chunks_false = [x.tolist() for x in np.array_split(ftr_false, time_res)]
 
@@ -142,7 +142,7 @@ def find_ovalue_purity(feature, target):
             if y > x:  # Avoid repeating the same chunk pair
                 xt = target_chunks[xi]
                 yt = target_chunks[yi]
-                dist = hist_purity(x, y, xt, yt, x_res, weighted, ignore_nan)
+                dist = hist_purity(x, y, xt, yt, x_res, weighted, ignore_zero)
                 cross.append(dist)
     try:
         return sum(cross) / len(cross)
@@ -159,7 +159,6 @@ else:
     print("Method must be set to either 'inter' or 'purity'")
 
 ######## EVALUATION #########
-# T
 
 # Load dataset into memory however you choose
 df_train = pickle.load(open('/home/mikel/kaggle-avito/cache/ftrs_train.bin', 'rb'))
